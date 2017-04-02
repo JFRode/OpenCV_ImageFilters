@@ -1,0 +1,29 @@
+﻿  stdafx.cpp
+  PDI.cpp
+PDI.cpp(10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+PDI.cpp(64): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+PDI.cpp(69): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+PDI.cpp(85): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+PDI.cpp(90): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+PDI.cpp(122): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+PDI.cpp(127): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+PDI.cpp(181): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+PDI.cpp(193): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+PDI.cpp(278): warning C4244: '=': conversion from 'float' to 'uchar', possible loss of data
+PDI.cpp(279): warning C4244: '=': conversion from 'float' to 'uchar', possible loss of data
+PDI.cpp(280): warning C4244: '=': conversion from 'float' to 'uchar', possible loss of data
+  TratamentoDeImagem.cpp
+TratamentoDeImagem.cpp(42): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+TratamentoDeImagem.cpp(77): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+TratamentoDeImagem.cpp(82): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+TratamentoDeImagem.cpp(98): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+TratamentoDeImagem.cpp(103): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+TratamentoDeImagem.cpp(135): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+TratamentoDeImagem.cpp(140): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+TratamentoDeImagem.cpp(194): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+TratamentoDeImagem.cpp(206): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Generating code
+  All 199 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  TratamentoDeImagem.vcxproj -> C:\Users\João\Desktop\Computação grafica\TratamentoDeImagem\x64\Release\TratamentoDeImagem.exe
+  TratamentoDeImagem.vcxproj -> C:\Users\João\Desktop\Computação grafica\TratamentoDeImagem\x64\Release\TratamentoDeImagem.pdb (Full PDB)
