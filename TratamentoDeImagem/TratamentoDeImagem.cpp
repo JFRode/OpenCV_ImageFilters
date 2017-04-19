@@ -5,6 +5,7 @@
 
 using namespace cv;
 
+Mat erosao(Mat imagem, int tamanhoKernel);
 Mat SomaDeImagens(Mat imagemA, Mat imagemB);
 Mat SubtracaoDeImagens(Mat imagemA, Mat imagemB);
 Mat Laplaciano(Mat imagemBase, int** kernel, int tamanhoKernel);
@@ -18,6 +19,12 @@ int intensidadeMinima(Mat imagemBase);
 Mat alargamento(Mat imagemBase);
 Mat limiarizacao(Mat imagemBase, int limiar);
 Mat janelamento(Mat imagemBase, int li, int ls);
+
+int elementoEstruturante[3][3] = {
+	0, 1, 0,
+	1, 1, 1,
+	0, 1, 0
+};
 
 const int valorDeNormalizacao = 128;
 
@@ -58,6 +65,31 @@ int main()
 
 	waitKey(0);
 	return 0;
+}
+
+Mat erosao(Mat imagem, int tamanhoKernel) {
+	Mat aux = imagem.clone();
+	int desl = tamanhoKernel / 2;
+	bool erodir = false;
+
+	for (int x = desl; x < aux.rows - desl; x++) {
+		for (int y = desl; y < aux.cols - desl; y++) {
+			for (int i = x - desl; i <= x + desl; i++) {
+				for (int j = y - desl; j <= y + desl; j++) {
+					Vec3b pixel = imagem.at<Vec3b>(i, j);
+					if (pixel[0] == 0 && elementoEstruturante[i - x + desl][j - y + desl] == 1) {
+						erodir = true;
+						break;
+					}
+				}
+			}
+			if (erodir) {
+				aux.at<Vec3b>(x, y) = 0;
+				erodir = false;
+			}
+		}
+	}
+	return aux;
 }
 
 Mat SomaDeImagens(Mat imagemA, Mat imagemB) {
