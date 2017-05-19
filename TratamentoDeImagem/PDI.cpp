@@ -1,6 +1,112 @@
 #include "stdafx.h"
 #include "PDI.h"
 
+int PDI::compare(const void * a, const void * b)
+{
+	return (*(int*)a - *(int*)b);
+}
+
+vector<vector<int>> PDI::esCustom(int tamX, int tamY, ...) {
+	vector<vector<int>> retorno;
+
+	va_list args;
+	va_start(args, tamY);
+
+	for (int i = 0; i < tamX; i++) {
+		vector<int> aux;
+		for (int j = 0; j < tamY; j++) {
+			aux.push_back(va_arg(args, int));
+		}
+		retorno.push_back(aux);
+	}
+	va_end(args);
+
+	return retorno;
+}
+
+vector<vector<int>> PDI::esQuadrado(int tamanho) {
+	return esRetangulo(tamanho, tamanho);
+}
+
+vector<vector<int>> PDI::esDiamante(int tamanho) {
+	vector<vector<int>> retorno;
+
+	for (int i = 0; i < tamanho; i++) {
+		vector<int> aux;
+		for (int j = 0; j < tamanho; j++) {
+			if (i + j < tamanho / 2 || i + j >= tamanho + tamanho / 2 ||
+				i - j < (tamanho / 2) * -1 || i - j > tamanho / 2)
+				aux.push_back(0);
+			else
+				aux.push_back(1);
+		}
+		retorno.push_back(aux);
+	}
+
+	return retorno;
+}
+
+vector<vector<int>> PDI::esCirculo(int tamanho) {
+	if (tamanho < 7)
+		return esDiamante(tamanho);
+
+	vector<vector<int>> retorno;
+
+	for (int i = 0; i < tamanho; i++) {
+		vector<int> aux;
+		for (int j = 0; j < tamanho; j++) {
+			if (sqrt((i - tamanho / 2) * (i - tamanho / 2) + (j - tamanho / 2) * (j - tamanho / 2)) > tamanho / 2 + 0.5f)
+				aux.push_back(0);
+			else
+				aux.push_back(1);
+		}
+		retorno.push_back(aux);
+	}
+
+	return retorno;
+}
+
+vector<vector<int>> PDI::esRetangulo(int tamanhoX, int tamanhoY) {
+	vector<vector<int>> retorno;
+
+	for (int i = 0; i < tamanhoX; i++) {
+		vector<int> aux;
+		for (int j = 0; j < tamanhoY; j++) {
+			aux.push_back(1);
+		}
+		retorno.push_back(aux);
+	}
+
+	return retorno;
+}
+
+vector<vector<int>> PDI::laplaciano() {
+	return esCustom(3, 3,
+		0, -1, 0,
+		-1, 4, -1,
+		0, -1, 0);
+}
+
+vector<vector<int>> PDI::laplacianoDiagonal() {
+	return esCustom(3, 3,
+		-1, -1, -1,
+		-1, 8, -1,
+		-1, -1, -1);
+}
+
+vector<vector<int>> PDI::kernelPonderado5() {
+	return esCustom(5, 5,
+		1, 4, 6, 4, 1,
+		4, 16, 24, 16, 4,
+		6, 24, 36, 24, 6,
+		4, 16, 24, 16, 4,
+		1, 4, 6, 4, 1);
+}
+
+vector<vector<int>> PDI::kernelCompleto(int tamanho) {
+	return esRetangulo(tamanho, tamanho);
+}
+
 Mat PDI::escalaCinza(Mat imagemColorida) {
 	Mat aux = imagemColorida.clone();
 
@@ -20,7 +126,7 @@ Mat PDI::escalaCinza(Mat imagemColorida) {
 	return aux;
 }
 
-Mat PDI::negativoLinear(Mat imagemBase) {
+Mat PDI::negativo(Mat imagemBase) {
 	Mat aux = imagemBase.clone();
 
 	for (int x = 0; x < aux.rows; x++) {
@@ -203,67 +309,11 @@ Mat PDI::janelamento(Mat imagemBase, int li, int ls) {
 	return aux;
 }
 
-int** PDI::kernel(int tamanho) {
-	int **kernelt = new int*[tamanho];
-	kernelt[0] = new int[tamanho * tamanho];
-	for (int i = 1; i < tamanho; i++) {
-		kernelt[i] = kernelt[i - 1] + tamanho;
-	}
-
-	for (int i = 0; i < tamanho; i++) {
-		for (int j = 0; j < tamanho; j++) {
-			kernelt[i][j] = 1;
-		}
-	}
-
-	return kernelt;
-}
-
-int** PDI::kernelPonderado() {
-	//soma 256
-	int tamanho = 5;
-	int **kernelt = new int*[tamanho];
-	kernelt[0] = new int[tamanho * tamanho];
-	for (int i = 1; i < tamanho; i++) {
-		kernelt[i] = kernelt[i - 1] + tamanho;
-	}
-
-	kernelt[0][0] = 1;
-	kernelt[0][1] = 4;
-	kernelt[0][2] = 6;
-	kernelt[0][3] = 4;
-	kernelt[0][4] = 1;
-
-	kernelt[1][0] = 4;
-	kernelt[1][1] = 16;
-	kernelt[1][2] = 24;
-	kernelt[1][3] = 16;
-	kernelt[1][4] = 4;
-
-	kernelt[2][0] = 6;
-	kernelt[2][1] = 24;
-	kernelt[2][2] = 36;
-	kernelt[2][3] = 24;
-	kernelt[2][4] = 6;
-
-	kernelt[3][0] = 4;
-	kernelt[3][1] = 16;
-	kernelt[3][2] = 24;
-	kernelt[3][3] = 16;
-	kernelt[3][4] = 4;
-
-	kernelt[4][0] = 1;
-	kernelt[4][1] = 4;
-	kernelt[4][2] = 6;
-	kernelt[4][3] = 4;
-	kernelt[4][4] = 1;
-
-	return kernelt;
-}
-
-Mat PDI::suavizacaoMedia(Mat imagemBase, int** kernel, int tamanhoKernel, int somaKernel) {
+Mat PDI::suavizacaoMedia(Mat imagemBase, vector<vector<int>> kernel) {
 	Mat aux = imagemBase.clone();
-	int desl = tamanhoKernel / 2;
+	int somaKernel = somarKernel(kernel);
+	int desl = kernel.size() / 2;
+
 	for (int x = desl; x < aux.rows - desl; x++) {
 		for (int y = desl; y < aux.cols - desl; y++) {
 			float soma = 0;
@@ -308,7 +358,208 @@ Mat PDI::suavizacaoMediana(Mat imagemBase, int tamanhoKernel) {
 	return aux;
 }
 
-int PDI::compare(const void * a, const void * b)
-{
-	return (*(int*)a - *(int*)b);
+Mat PDI::detectarBordas(Mat imagemBase, vector<vector<int>> kernel, int baseCalculo) {
+	Mat aux = imagemBase.clone();
+	int desl = kernel.size() / 2;
+
+	for (int x = desl; x < aux.rows - desl; x++) {
+		for (int y = desl; y < aux.cols - desl; y++) {
+			int soma = 0;
+			for (int i = x - desl; i <= x + desl; i++) {
+				for (int j = y - desl; j <= y + desl; j++) {
+					Vec3b pixel = imagemBase.at<Vec3b>(i, j);
+					soma += pixel[2] * kernel[i - x + desl][j - y + desl];
+				}
+			}
+
+			soma += baseCalculo;
+			if (soma < 1)
+				soma = 0;
+			if (soma > 255)
+				soma = 255;
+
+			Vec3b pixel = imagemBase.at<Vec3b>(x, y);
+
+			pixel[0] = soma;
+			pixel[1] = soma;
+			pixel[2] = soma;
+
+			aux.at<Vec3b>(x, y) = pixel;
+
+		}
+	}
+	return aux;
+}
+
+Mat PDI::somarImagens(Mat imagemBase, Mat imagemSoma, int baseCalculo) {
+	Mat aux = imagemBase.clone();
+	for (int x = 0; x < aux.rows; x++) {
+		for (int y = 0; y < aux.cols; y++) {
+			Vec3b pixelB = aux.at<Vec3b>(x, y);
+			Vec3b pixelS = imagemSoma.at<Vec3b>(x, y);
+			int novoPixel = pixelB[2] + pixelS[2] + baseCalculo;
+			if (novoPixel > 255)
+				novoPixel = 255;
+			if (novoPixel < 0)
+				novoPixel = 0;
+			pixelB[2] = novoPixel;
+			pixelB[1] = novoPixel;
+			pixelB[0] = novoPixel;
+			aux.at<Vec3b>(x, y) = pixelB;
+		}
+	}
+
+	return aux;
+}
+
+Mat PDI::subtrairImagens(Mat imagemBase, Mat imagemSub, int baseCalculo) {
+	Mat aux = imagemBase.clone();
+	for (int x = 0; x < aux.rows; x++) {
+		for (int y = 0; y < aux.cols; y++) {
+			Vec3b pixelB = aux.at<Vec3b>(x, y);
+			Vec3b pixelS = imagemSub.at<Vec3b>(x, y);
+			int novoPixel = pixelB[2] - pixelS[2] + baseCalculo;
+			if (novoPixel < 0)
+				novoPixel = 0;
+			if (novoPixel > 255)
+				novoPixel = 255;
+			pixelB[2] = novoPixel;
+			pixelB[1] = novoPixel;
+			pixelB[0] = novoPixel;
+			aux.at<Vec3b>(x, y) = pixelB;
+		}
+	}
+
+	return aux;
+}
+
+int PDI::somarKernel(vector<vector<int>> kernel) {
+	int soma = 0;
+	for (vector<int> linha : kernel) {
+		for (int elemento : linha) {
+			soma += elemento;
+		}
+	}
+	return soma;
+}
+
+Mat PDI::agucamentoLaplaciano(Mat imagemBase, vector<vector<int>> kernel) {
+	Mat aux = detectarBordas(imagemBase, kernel, 128);
+	aux = somarImagens(imagemBase, aux, -128);
+
+	return aux;
+}
+
+Mat PDI::agucamentoMascaraNitidez(Mat imagemBase, vector<vector<int>> kernelSuavizacao) {
+	Mat aux = suavizacaoMedia(imagemBase, kernelSuavizacao);
+	aux = subtrairImagens(imagemBase, aux, 128);
+	aux = somarImagens(imagemBase, aux, -128);
+
+	return aux;
+}
+
+Mat PDI::dilatacao(Mat imagemBase, vector<vector<int>> elementoEstruturante) {
+	return dilatacao(imagemBase, elementoEstruturante, elementoEstruturante.size() / 2, elementoEstruturante[0].size() / 2);
+}
+
+Mat PDI::dilatacao(Mat imagemBase, vector<vector<int>> elementoEstruturante, int cGravidadeX, int cGravidadeY) {
+	Mat aux = imagemBase.clone();
+
+	int deslCima = cGravidadeX;
+	int deslBaixo = elementoEstruturante.size() - cGravidadeX - 1;
+	int deslEsq = cGravidadeY;
+	int deslDir = elementoEstruturante[0].size() - cGravidadeY - 1;
+
+	for (int x = 0; x < aux.rows; x++) {
+		for (int y = 0; y < aux.cols; y++) {
+
+			if (testeDilatar(imagemBase, elementoEstruturante, deslEsq, deslDir, deslCima, deslBaixo, x, y)) {
+				Vec3b pixel = imagemBase.at<Vec3b>(x, y);
+				pixel[2] = 255;
+				pixel[1] = 255;
+				pixel[0] = 255;
+				aux.at<Vec3b>(x, y) = pixel;
+			}
+		}
+	}
+
+	return aux;
+}
+
+Mat PDI::erosao(Mat imagemBase, vector<vector<int>> elementoEstruturante) {
+	return erosao(imagemBase, elementoEstruturante, elementoEstruturante.size() / 2, elementoEstruturante[0].size() / 2);
+}
+
+Mat PDI::erosao(Mat imagemBase, vector<vector<int>> elementoEstruturante, int cGravidadeX, int cGravidadeY) {
+	Mat aux = imagemBase.clone();
+
+	int deslCima = cGravidadeX;
+	int deslBaixo = elementoEstruturante.size() - cGravidadeX - 1;
+	int deslEsq = cGravidadeY;
+	int deslDir = elementoEstruturante[0].size() - cGravidadeY - 1;
+
+	for (int x = 0; x < aux.rows; x++) {
+		for (int y = 0; y < aux.cols; y++) {
+
+			if (testeErodir(imagemBase, elementoEstruturante, deslEsq, deslDir, deslCima, deslBaixo, x, y)) {
+				Vec3b pixel = imagemBase.at<Vec3b>(x, y);
+				pixel[2] = 0;
+				pixel[1] = 0;
+				pixel[0] = 0;
+				aux.at<Vec3b>(x, y) = pixel;
+			}
+		}
+	}
+
+	return aux;
+}
+
+Mat PDI::abertura(Mat imagemBase, vector<vector<int>> elementoEstruturante) {
+	return abertura(imagemBase, elementoEstruturante, elementoEstruturante.size() / 2, elementoEstruturante[0].size() / 2);
+}
+
+Mat PDI::abertura(Mat imagemBase, vector<vector<int>> elementoEstruturante, int cGravidadeX, int cGravidadeY) {
+	Mat aux = erosao(imagemBase, elementoEstruturante, cGravidadeX, cGravidadeY);
+	aux = dilatacao(aux, elementoEstruturante, cGravidadeX, cGravidadeY);
+
+	return aux;
+}
+
+Mat PDI::fechamento(Mat imagemBase, vector<vector<int>> elementoEstruturante) {
+	return fechamento(imagemBase, elementoEstruturante, elementoEstruturante.size() / 2, elementoEstruturante[0].size() / 2);
+}
+
+Mat PDI::fechamento(Mat imagemBase, vector<vector<int>> elementoEstruturante, int cGravidadeX, int cGravidadeY) {
+	Mat aux = dilatacao(imagemBase, elementoEstruturante, cGravidadeX, cGravidadeY);
+	aux = erosao(aux, elementoEstruturante, cGravidadeX, cGravidadeY);
+
+	return aux;
+}
+
+bool PDI::testeDilatar(Mat imagemBase, vector<vector<int>> elementoEstruturante, int deslEsq, int deslDir, int deslCima, int deslBaixo, int x, int y) {
+	for (int i = x - deslCima, esX = 0; i <= x + deslBaixo; i++, esX++) {
+		for (int j = y - deslEsq, esY = 0; j <= y + deslDir; j++, esY++) {
+			if (i < 0 || j < 0 || i >= imagemBase.rows || j >= imagemBase.cols)
+				continue;
+			Vec3b pixel = imagemBase.at<Vec3b>(i, j);
+			if (pixel[0] == 255 && elementoEstruturante[esX][esY] == 1)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+bool PDI::testeErodir(Mat imagemBase, vector<vector<int>> elementoEstruturante, int deslEsq, int deslDir, int deslCima, int deslBaixo, int x, int y) {
+	for (int i = x - deslCima, esX = 0; i <= x + deslBaixo; i++, esX++) {
+		for (int j = y - deslEsq, esY = 0; j <= y + deslDir; j++, esY++) {
+			if (i < 0 || j < 0 || i >= imagemBase.rows || j >= imagemBase.cols)
+				continue;
+			Vec3b pixel = imagemBase.at<Vec3b>(i, j);
+			if (pixel[0] == 0 && elementoEstruturante[esX][esY] == 1)
+				return true;
+		}
+	}
+
+	return false;
 }
