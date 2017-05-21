@@ -20,9 +20,13 @@ Mat janelamento(Mat imagemBase, int li, int ls);
 
 int main()
 {
-	Mat original = imread("C:\\Users\\João\\Desktop\\prova m2\\imagens\\QBOriginal.png");
+	Mat original = imread("C:\\Users\\user\\Desktop\\PrimeiroTeste.png");
 	Mat image;
 
+	float * histograma = PDI::gerarHistograma(original);
+	image = PDI::limiarizacaoGlobalSimples(original, 0.5);
+
+	/* Exemplo do elemento Estruturante
 	ElementoEstruturante esCustom = PDI::esCustom(5, 5,
 		0, 0, 1, 0, 0,
 		0, 1, 1, 1, 0,
@@ -31,6 +35,7 @@ int main()
 		0, 0, 1, 0, 0);
 
 	image = PDI::dilatacao(original, esCustom);
+	*/
 
 	imshow("Original", original);
 	imshow("Final", image);
@@ -221,4 +226,3 @@ Mat janelamento(Mat imagemBase, int li, int ls) {
 
 	return aux;
 }
-

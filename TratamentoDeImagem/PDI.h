@@ -14,6 +14,8 @@ using namespace cv;
 class PDI
 {
 public:
+	static Mat PDI::limiarizacaoGlobalSimples(Mat imagemBaseCinza, float limiar);
+	static float * gerarHistograma(Mat imagem);
 	static Mat escalaCinza(Mat imagemColorida);
 	static Mat canal(Mat imagemColorida, int canal);
 	static Mat negativo(Mat imagemBase);

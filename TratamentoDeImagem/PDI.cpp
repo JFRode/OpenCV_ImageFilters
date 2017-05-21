@@ -1,6 +1,75 @@
 #include "stdafx.h"
 #include "PDI.h"
 
+Mat PDI::limiarizacaoGlobalSimples(Mat imagem, float limiar) {
+	Mat aux = escalaCinza(imagem);
+	int tamanhoG1 = 0;
+	int tamanhoG2 = 0;
+	float g1[255] = {0};
+	float g2[255] = {0};
+
+	float * histograma = gerarHistograma(aux);
+	float limiarAntigo = limiar;
+
+	for (int i = 0; i < 255; i++) {
+		if (histograma[i] <= limiar) {
+			g1[tamanhoG1] = histograma[i];
+			tamanhoG1++;
+		}
+		else {
+			g2[tamanhoG2] = histograma[i];
+			tamanhoG2++;
+		}
+	}
+
+	do {
+		float m1 = 0;
+		float m2 = 0;
+		float totalM1 = 0;
+		float totalM2 = 0;
+
+		for (int i = 1; i <= tamanhoG1; i++) {
+			m1 += (i * g1[i]);
+			totalM1 += g1[i];
+		}
+		if (m1 > 0) {
+			m1 = m1 / totalM1;
+		}
+
+		for (int i = 1; i <= tamanhoG2; i++) {
+			m2 += (i * g2[i]);
+			totalM2 += g2[i];
+		}
+		if (m2 > 0) {
+			m2 = m2 / totalM2;
+		}
+
+		limiar = 0.5 * (m1 + m2);
+	} while (limiar < limiarAntigo);
+
+	return limiarizacao(aux, limiar);
+}
+
+float * PDI::gerarHistograma(Mat imagem) {
+	float histograma[255] = {0};
+	float totalDePixels = imagem.rows * imagem.cols;
+
+	//	Contabiliza intensidades
+	for (int x = 0; x < imagem.rows; x++) {
+		for (int y = 0; y < imagem.cols; y++) {
+			Vec3b pixel = imagem.at<Vec3b>(x, y);
+			histograma[pixel[2]]++;
+		}
+	}
+
+	//	Normaliza
+	for (int i = 0; i < 255; i++) {
+		histograma[i] = histograma[i] / totalDePixels;
+	}
+
+	return histograma;
+}
+
 int PDI::compare(const void * a, const void * b)
 {
 	return (*(int*)a - *(int*)b);
